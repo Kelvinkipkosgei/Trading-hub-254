@@ -1,0 +1,730 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeSwift · demo & real trading</title>
+    <!-- Font Awesome for icons (optional, but adds visual clarity) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0b0f1a 0%, #141b2b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        /* main card */
+        .trade-card {
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(22, 28, 45, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 2.5rem;
+            border: 1px solid rgba(77, 113, 255, 0.25);
+            box-shadow: 0 30px 50px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(80, 140, 255, 0.1);
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        /* header */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, #3b7bff, #8a5cff);
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: white;
+            box-shadow: 0 8px 18px -4px #3b7bff80;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff, #b8cbff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* google sign in button */
+        .google-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #ffffff;
+            color: #1f1f1f;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .google-btn i {
+            font-size: 1.3rem;
+            color: #DB4437;
+        }
+
+        .google-btn:hover {
+            background: #f1f3f4;
+            transform: scale(1.02);
+            box-shadow: 0 8px 22px rgba(59, 123, 255, 0.3);
+        }
+
+        /* account toggle */
+        .account-toggle {
+            display: flex;
+            background: #111826;
+            border-radius: 80px;
+            padding: 5px;
+            border: 1px solid #2a3448;
+            margin-bottom: 2rem;
+            max-width: 320px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 0.75rem 1.8rem;
+            border-radius: 60px;
+            border: none;
+            background: transparent;
+            color: #8e9db5;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .toggle-btn i {
+            font-size: 1rem;
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(135deg, #2a5cff, #6a4eff);
+            color: white;
+            box-shadow: 0 6px 16px #2a5cff60;
+        }
+
+        .toggle-btn:not(.active):hover {
+            color: #cbd5e1;
+        }
+
+        /* trading panel */
+        .trading-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* stats row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: #101826;
+            border-radius: 1.5rem;
+            padding: 1.3rem 1.5rem;
+            border: 1px solid #1e2a3f;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+            transition: border 0.2s;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #6f7f9e;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-top: 0.3rem;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .stat-value small {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #7e8ea8;
+        }
+
+        .green {
+            color: #4cdb7c;
+        }
+
+        .red {
+            color: #ff6a7a;
+        }
+
+        .account-badge {
+            display: inline-block;
+            background: #1e2a3f;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #b7c9ff;
+            border: 1px solid #314a6b;
+        }
+
+        /* main chart + order */
+        .chart-order-row {
+            display: grid;
+            grid-template-columns: 1fr 0.9fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 780px) {
+            .chart-order-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-area {
+            background: #0d1421;
+            border-radius: 1.8rem;
+            padding: 1.2rem 1.2rem 0.8rem 1.2rem;
+            border: 1px solid #1e2a3f;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            color: #abbad6;
+            font-size: 0.9rem;
+            padding: 0 0.5rem 0.5rem 0.5rem;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 160px;
+            padding: 1rem 0.5rem 0 0.5rem;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(0deg, #2a5cff, #5f8aff);
+            border-radius: 6px 6px 4px 4px;
+            min-height: 6px;
+            transition: 0.2s;
+            opacity: 0.85;
+        }
+
+        .bar:nth-child(2) { height: 60%; }
+        .bar:nth-child(3) { height: 42%; }
+        .bar:nth-child(4) { height: 85%; }
+        .bar:nth-child(5) { height: 55%; }
+        .bar:nth-child(6) { height: 72%; }
+        .bar:nth-child(7) { height: 95%; background: linear-gradient(0deg, #4cdb7c, #8cffb0); }
+        .bar:nth-child(8) { height: 48%; }
+
+        .order-box {
+            background: #101826;
+            border-radius: 1.8rem;
+            padding: 1.5rem 1.5rem 1.8rem 1.5rem;
+            border: 1px solid #1e2a3f;
+        }
+
+        .order-box h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: #7b8ba8;
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: #0b111e;
+            border: 1px solid #26334a;
+            border-radius: 1rem;
+            padding: 0.9rem 1.1rem;
+            color: white;
+            font-size: 1rem;
+            font-weight: 500;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: #3b7bff;
+            box-shadow: 0 0 0 3px #3b7bff30;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 1.2rem;
+            border: none;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-buy {
+            background: #1e7e4a;
+            color: white;
+            box-shadow: 0 6px 0 #0b3b22;
+        }
+
+        .btn-buy:hover {
+            background: #229654;
+            transform: translateY(-2px);
+        }
+
+        .btn-sell {
+            background: #a12b3e;
+            color: white;
+            box-shadow: 0 6px 0 #56101d;
+        }
+
+        .btn-sell:hover {
+            background: #bb334a;
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: none;
+        }
+
+        /* demo / real status bar */
+        .mode-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0c1320;
+            border-radius: 80px;
+            padding: 0.7rem 1.5rem;
+            margin-top: 1.8rem;
+            border: 1px solid #2c3a52;
+        }
+
+        .mode-indicator span {
+            color: #97a9c7;
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mode-indicator .status-badge {
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .demo-mode .status-badge {
+            background: #2e3d5e;
+            color: #b0c8ff;
+        }
+
+        .real-mode .status-badge {
+            background: #1b5e3c;
+            color: #b3ffcf;
+            border: 1px solid #2b8f5a;
+        }
+
+        /* misc */
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+        .text-sm {
+            font-size: 0.85rem;
+            color: #8c9bb5;
+        }
+
+        .warning-text {
+            color: #ffb86b;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        .fa-google {
+            background: conic-gradient(from -45deg, #ea4335 110deg, #4285f4 90deg 180deg, #34a853 180deg 270deg, #fbbc05 270deg) ;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="trade-card">
+        <!-- header -->
+        <div class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="logo-text">TradeSwift</div>
+            </div>
+            <!-- Google sign-in (real account) -->
+            <button class="google-btn" id="googleSignInBtn">
+                <i class="fab fa-google"></i> Sign in with Google
+            </button>
+        </div>
+
+        <!-- demo / real toggle -->
+        <div class="account-toggle" id="accountToggle">
+            <button class="toggle-btn active" data-mode="demo" id="demoToggle">
+                <i class="fas fa-flask"></i> Demo
+            </button>
+            <button class="toggle-btn" data-mode="real" id="realToggle">
+                <i class="fas fa-bolt"></i> Real
+            </button>
+        </div>
+
+        <!-- trading panel -->
+        <div class="trading-panel">
+            <!-- stats row -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-label">Balance</div>
+                    <div class="stat-value" id="balanceDisplay">$10,000<small>USD</small></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Equity</div>
+                    <div class="stat-value" id="equityDisplay">$10,000<small>USD</small></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">P&L (24h)</div>
+                    <div class="stat-value green" id="pnlDisplay">+$248<small>+2.48%</small></div>
+                </div>
+            </div>
+
+            <!-- chart and order row -->
+            <div class="chart-order-row">
+                <!-- chart area (visual only) -->
+                <div class="chart-area">
+                    <div class="chart-header">
+                        <span><i class="fas fa-chart-simple"></i> BTC/USD · 1H</span>
+                        <span>$67,420 <span class="green" style="margin-left: 6px;">+3.2%</span></span>
+                    </div>
+                    <div class="chart-bars">
+                        <div class="bar" style="height: 45%;"></div>
+                        <div class="bar" style="height: 60%;"></div>
+                        <div class="bar" style="height: 42%;"></div>
+                        <div class="bar" style="height: 85%;"></div>
+                        <div class="bar" style="height: 55%;"></div>
+                        <div class="bar" style="height: 72%;"></div>
+                        <div class="bar" style="height: 95%;"></div>
+                        <div class="bar" style="height: 48%;"></div>
+                    </div>
+                </div>
+
+                <!-- order form -->
+                <div class="order-box">
+                    <h3><i class="fas fa-arrow-right-arrow-left"></i> Place order</h3>
+                    <div class="input-group">
+                        <label>Amount (USD)</label>
+                        <input type="number" id="orderAmount" value="1000" min="10" step="10">
+                    </div>
+                    <div class="input-group">
+                        <label>Asset</label>
+                        <input type="text" value="BTC/USD" readonly style="background: #0b111e; color: #b0c1dd;">
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-buy" id="buyBtn"><i class="fas fa-arrow-up"></i> Buy</button>
+                        <button class="btn btn-sell" id="sellBtn"><i class="fas fa-arrow-down"></i> Sell</button>
+                    </div>
+                    <div class="warning-text" id="orderWarning"></div>
+                </div>
+            </div>
+
+            <!-- mode indicator: shows current mode and auth status -->
+            <div class="mode-indicator" id="modeIndicator">
+                <span>
+                    <i class="fas fa-circle" style="color: #4cdb7c; font-size: 0.7rem;"></i>
+                    <span id="modeText">Demo account</span>
+                </span>
+                <span class="status-badge" id="statusBadge">DEMO</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // --- state ---
+            let isRealMode = false;      // demo or real
+            let isGoogleSignedIn = false;
+            let googleUserName = '';
+
+            // DOM elements
+            const demoToggle = document.getElementById('demoToggle');
+            const realToggle = document.getElementById('realToggle');
+            const modeIndicator = document.getElementById('modeIndicator');
+            const modeText = document.getElementById('modeText');
+            const statusBadge = document.getElementById('statusBadge');
+            const balanceDisplay = document.getElementById('balanceDisplay');
+            const equityDisplay = document.getElementById('equityDisplay');
+            const pnlDisplay = document.getElementById('pnlDisplay');
+            const googleSignInBtn = document.getElementById('googleSignInBtn');
+            const buyBtn = document.getElementById('buyBtn');
+            const sellBtn = document.getElementById('sellBtn');
+            const orderAmount = document.getElementById('orderAmount');
+            const orderWarning = document.getElementById('orderWarning');
+
+            // --- helper: update UI based on mode and sign-in state ---
+            function refreshUI() {
+                // demo / real toggle active classes
+                if (isRealMode) {
+                    demoToggle.classList.remove('active');
+                    realToggle.classList.add('active');
+                    modeIndicator.classList.remove('demo-mode');
+                    modeIndicator.classList.add('real-mode');
+                    // mode text & badge
+                    if (isGoogleSignedIn) {
+                        modeText.innerText = `Real account · ${googleUserName}`;
+                        statusBadge.innerText = 'REAL';
+                        statusBadge.style.background = '#1b5e3c';
+                        statusBadge.style.color = '#b3ffcf';
+                        statusBadge.style.border = '1px solid #2b8f5a';
+                    } else {
+                        modeText.innerText = 'Real account (not signed in)';
+                        statusBadge.innerText = 'SIGN IN';
+                        statusBadge.style.background = '#5e3d1b';
+                        statusBadge.style.color = '#ffcf9a';
+                        statusBadge.style.border = '1px solid #b57c2b';
+                    }
+                    // balance, equity example for real mode (slightly different style)
+                    balanceDisplay.innerHTML = isGoogleSignedIn ? '$5,230<small>USD</small>' : '$0<small>USD</small>';
+                    equityDisplay.innerHTML = isGoogleSignedIn ? '$5,230<small>USD</small>' : '$0<small>USD</small>';
+                    // pnl display
+                    pnlDisplay.innerHTML = isGoogleSignedIn ? '+$132<small>+2.52%</small>' : '—<small>—</small>';
+                    pnlDisplay.classList.toggle('green', isGoogleSignedIn);
+                    pnlDisplay.classList.toggle('red', !isGoogleSignedIn);
+                } else {
+                    // demo mode
+                    realToggle.classList.remove('active');
+                    demoToggle.classList.add('active');
+                    modeIndicator.classList.remove('real-mode');
+                    modeIndicator.classList.add('demo-mode');
+                    modeText.innerText = 'Demo account';
+                    statusBadge.innerText = 'DEMO';
+                    statusBadge.style.background = '#2e3d5e';
+                    statusBadge.style.color = '#b0c8ff';
+                    statusBadge.style.border = 'none';
+                    // demo values
+                    balanceDisplay.innerHTML = '$10,000<small>USD</small>';
+                    equityDisplay.innerHTML = '$10,000<small>USD</small>';
+                    pnlDisplay.innerHTML = '+$248<small>+2.48%</small>';
+                    pnlDisplay.classList.add('green');
+                    pnlDisplay.classList.remove('red');
+                }
+
+                // Google button text reflects sign in state
+                if (isGoogleSignedIn) {
+                    googleSignInBtn.innerHTML = `<i class="fab fa-google"></i> ${googleUserName} (signed)`;
+                    googleSignInBtn.style.background = '#e8f0fe';
+                    googleSignInBtn.style.color = '#1f1f1f';
+                } else {
+                    googleSignInBtn.innerHTML = `<i class="fab fa-google"></i> Sign in with Google`;
+                    googleSignInBtn.style.background = '#ffffff';
+                    googleSignInBtn.style.color = '#1f1f1f';
+                }
+
+                // clear any previous warning
+                orderWarning.innerText = '';
+            }
+
+            // --- toggle handlers ---
+            demoToggle.addEventListener('click', () => {
+                if (isRealMode) {
+                    isRealMode = false;
+                    refreshUI();
+                }
+            });
+
+            realToggle.addEventListener('click', () => {
+                if (!isRealMode) {
+                    isRealMode = true;
+                    refreshUI();
+                }
+            });
+
+            // --- google sign in (simulate real google sign in) ---
+            googleSignInBtn.addEventListener('click', () => {
+                if (isGoogleSignedIn) {
+                    // if already signed in, maybe sign out (optional, but we'll keep it simple: just alert)
+                    // We'll keep it as sign out for better UX? Actually, let's make it sign out if clicked again.
+                    // For demo purpose, toggles sign out.
+                    isGoogleSignedIn = false;
+                    googleUserName = '';
+                    // if real mode is active, switch back to demo? Not necessary, but we update UI
+                    refreshUI();
+                    // additional note if real mode active
+                    if (isRealMode) {
+                        orderWarning.innerText = 'Signed out. Real trading disabled until you sign in.';
+                    }
+                } else {
+                    // simulate Google sign-in popup flow (just a quick confirmation)
+                    const user = prompt('Enter your Google name or email (simulated sign-in):', 'Alex Trader');
+                    if (user !== null && user.trim() !== '') {
+                        isGoogleSignedIn = true;
+                        googleUserName = user.trim();
+                        // if we are in demo mode, maybe switch to real? No, keep mode unchanged. User can toggle.
+                        refreshUI();
+                        if (isRealMode) {
+                            // now real mode is active and signed in
+                        } else {
+                            orderWarning.innerText = 'Signed in with Google. Switch to Real to trade live.';
+                        }
+                    } else {
+                        // user cancelled prompt
+                        if (!isGoogleSignedIn) {
+                            orderWarning.innerText = 'Sign-in cancelled. Real account requires Google authentication.';
+                        }
+                    }
+                }
+            });
+
+            // --- buy/sell actions ---
+            function placeOrder(type) {
+                const amount = parseFloat(orderAmount.value);
+                if (isNaN(amount) || amount < 10) {
+                    orderWarning.innerText = 'Enter a valid amount (min $10).';
+                    return;
+                }
+
+                // check real mode authentication
+                if (isRealMode && !isGoogleSignedIn) {
+                    orderWarning.innerText = '⚠️ Real trading requires Google sign-in. Click "Sign in with Google" first.';
+                    return;
+                }
+
+                // simulate order execution
+                let action = type === 'buy' ? 'Buy' : 'Sell';
+                let orderValue = amount.toFixed(2);
+                if (isRealMode) {
+                    orderWarning.innerText = `✅ REAL ${action} order placed: $${orderValue} (simulated)`;
+                    // also update balance/equity for realism (only if signed in)
+                    if (isGoogleSignedIn) {
+                        // mock reduction of balance
+                        let currentBalance = parseFloat(balanceDisplay.innerText.replace(/[^0-9.-]/g, '')) || 0;
+                        if (type === 'buy') {
+                            let newBal = Math.max(0, currentBalance - amount);
+                            balanceDisplay.innerHTML = `$${newBal.toFixed(2)}<small>USD</small>`;
+                            equityDisplay.innerHTML = `$${newBal.toFixed(2)}<small>USD</small>`;
+                        } else {
+                            // sell -> increase balance
+                            let newBal = currentBalance + amount;
+                            balanceDisplay.innerHTML = `$${newBal.toFixed(2)}<small>USD</small>`;
+                            equityDisplay.innerHTML = `$${newBal.toFixed(2)}<small>USD</small>`;
+                        }
+                    }
+                } else {
+                    // demo mode
+                    orderWarning.innerText = `📊 DEMO ${action} order placed: $${orderValue} (virtual)`;
+                    // simulate virtual balance change for fun
+                    let currentBalance = parseFloat(balanceDisplay.innerText.replace(/[^0-9.-]/g, '')) || 0;
+                    if (type === 'buy') {
+                        let newBal = Math.max(0, currentBalance - amount);
+                        balanceDisplay.innerHTML = `$${newBal.toFixed(2)}<small>USD</small>`;
+                        equityDisplay.innerHTML = `$${newBal.toFixed(2)}<small>USD</small>`;
+                    } else {
+                        let newBal = currentBalance + amount;
+                        balanceDisplay.innerHTML = `$${newBal.toFixed(2)}<small>USD</small>`;
+                        equityDisplay.innerHTML = `$${newBal.toFixed(2)}<small>USD</small>`;
+                    }
+                }
+            }
+
+            buyBtn.addEventListener('click', () => placeOrder('buy'));
+            sellBtn.addEventListener('click', () => placeOrder('sell'));
+
+            // --- initial UI setup ---
+            refreshUI();
+            // Set initial warning state (optional)
+            orderWarning.innerText = '';
+
+            // If user switches modes, we want to clear warning
+            demoToggle.addEventListener('click', () => { orderWarning.innerText = ''; });
+            realToggle.addEventListener('click', () => { orderWarning.innerText = ''; });
+
+            // Also if google sign in, clear warning
+            // (already inside googleSignInBtn event, but we can just ensure)
+        })();
+    </script>
+    <!-- note: font awesome loaded, but if offline, icons fallback gracefully -->
+</body>
+</html>
